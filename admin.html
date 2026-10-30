@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Admin | New Glory Resources Store</title>
+<meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#10192b">
+<link rel="icon" href="logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>.box{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:16px}.li{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}.li img{width:52px;height:52px;object-fit:cover;border-radius:8px;background:#e8ecf2}.li div{flex:1;min-width:0}.li b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.li .btn{padding:8px 12px;min-height:38px}.tabs{display:flex;gap:8px;margin-bottom:14px}.two{display:grid;gap:0 12px;grid-template-columns:1fr 1fr}</style></head><body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+<script>document.body.insertAdjacentHTML('afterbegin',head(''))</script>
+<main class="wrap" style="max-width:760px">
+<section id="lg" class="box"><h1 style="font-size:1.4rem">Admin sign in</h1>
+<form id="lf"><label for="e">Email</label><input id="e" type="email" required autocomplete="username"><label for="pw">Password</label><input id="pw" type="password" required autocomplete="current-password"><button class="btn" style="margin-top:14px;width:100%">Sign in</button></form></section>
+<section id="ad" hidden>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h1 style="font-size:1.4rem">Manage store</h1><button class="btn alt" id="out">Sign out</button></div>
+<div class="tabs"><button class="chip on" data-t="p">Products</button><button class="chip" data-t="b">Blog posts</button></div>
+<div id="tp"><form class="box" id="pf"><h2 id="pt" style="font-size:1.1rem">Add a product</h2>
+<label for="pn">Product name</label><input id="pn" required>
+<div class="two"><div><label for="pr">Price (₦)</label><input id="pr" type="number" min="0" step="any" required></div><div><label for="pc">Category</label><input id="pc" list="cl" placeholder="e.g. Phones"><datalist id="cl"></datalist></div></div>
+<label for="pd">Description</label><textarea id="pd" rows="3"></textarea>
+<label for="pi">Photo</label><input id="pi" type="file" accept="image/*">
+<label style="display:flex;gap:8px;align-items:center"><input id="ps" type="checkbox" checked style="width:auto"> In stock</label>
+<div style="display:flex;gap:8px;margin-top:14px"><button class="btn" id="pb">Add product</button><button type="button" class="btn alt" id="pcn" hidden>Cancel edit</button></div></form>
+<div class="box" id="pl"></div></div>
+<div id="tb" hidden><form class="box" id="bf"><h2 id="bt" style="font-size:1.1rem">Write a blog post</h2>
+<label for="bh">Title</label><input id="bh" required>
+<label for="bd">Post</label><textarea id="bd" rows="8" required></textarea>
+<label for="bi">Cover photo</label><input id="bi" type="file" accept="image/*">
+<div style="display:flex;gap:8px;margin-top:14px"><button class="btn" id="bb">Publish post</button><button type="button" class="btn alt" id="bcn" hidden>Cancel edit</button></div></form>
+<div class="box" id="bl"></div></div>
+</section></main>
+<script>
+let P=[],B=[],ep=null,eb=null;
+async function up(f){if(!f)return null;const n=Date.now()+'-'+f.name.replace(/[^\w.]/g,'_');const{error}=await sb.storage.from('images').upload(n,f);if(error)throw error;return sb.storage.from('images').getPublicUrl(n).data.publicUrl}
+async function gate(){
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session)return;
+  const{data}=await sb.from('admins').select('email').maybeSingle();
+  if(!data){await sb.auth.signOut();toast('This account is not an admin.');return}
+  $('#lg').hidden=true;$('#ad').hidden=false;load();
+}
+$('#lf').onsubmit=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:$('#e').value,password:$('#pw').value});if(error)return toast('Wrong email or password.');gate()};
+$('#out').onclick=async()=>{await sb.auth.signOut();location.reload()};
+document.querySelector('.tabs').onclick=e=>{const t=e.target.dataset.t;if(!t)return;document.querySelectorAll('.tabs .chip').forEach(c=>c.classList.toggle('on',c==e.target));$('#tp').hidden=t!='p';$('#tb').hidden=t!='b'};
+async function load(){
+  P=(await sb.from('products').select('*').order('created_at',{ascending:false})).data||[];
+  B=(await sb.from('posts').select('*').order('created_at',{ascending:false})).data||[];
+  $('#cl').innerHTML=[...new Set(P.map(p=>p.category).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
+  $('#pl').innerHTML=P.length?P.map(p=>`<div class="li"><img src="${esc(p.image_url||ph)}" alt=""><div><b>${esc(p.name)}</b><span class="mut">${naira(p.price)}${p.in_stock?'':' · Sold out'}</span></div><button class="btn alt" data-ep="${p.id}">Edit</button><button class="btn red" data-dp="${p.id}">Delete</button></div>`).join(''):'<p class="empty">No products yet. Add your first one above.</p>';
+  $('#bl').innerHTML=B.length?B.map(p=>`<div class="li"><img src="${esc(p.image_url||ph)}" alt=""><div><b>${esc(p.title)}</b></div><button class="btn alt" data-eb="${p.id}">Edit</button><button class="btn red" data-db="${p.id}">Delete</button></div>`).join(''):'<p class="empty">No posts yet. Write your first one above.</p>';
+}
+function resetP(){ep=null;$('#pf').reset();$('#pt').textContent='Add a product';$('#pb').textContent='Add product';$('#pcn').hidden=true}
+function resetB(){eb=null;$('#bf').reset();$('#bt').textContent='Write a blog post';$('#bb').textContent='Publish post';$('#bcn').hidden=true}
+$('#pcn').onclick=resetP;$('#bcn').onclick=resetB;
+$('#pf').onsubmit=async e=>{e.preventDefault();$('#pb').disabled=true;
+  try{const cur=P.find(x=>x.id==ep),img=await up($('#pi').files[0]);
+    const row={name:$('#pn').value,price:$('#pr').value,category:$('#pc').value||'Gadgets',description:$('#pd').value,in_stock:$('#ps').checked,image_url:img||cur?.image_url||null};
+    const{error}=ep?await sb.from('products').update(row).eq('id',ep):await sb.from('products').insert(row);if(error)throw error;
+    toast(ep?'Product updated':'Product added');resetP();load()}catch(x){toast('Could not save: '+x.message)}
+  $('#pb').disabled=false};
+$('#bf').onsubmit=async e=>{e.preventDefault();$('#bb').disabled=true;
+  try{const cur=B.find(x=>x.id==eb),img=await up($('#bi').files[0]);
+    const row={title:$('#bh').value,body:$('#bd').value,image_url:img||cur?.image_url||null};
+    const{error}=eb?await sb.from('posts').update(row).eq('id',eb):await sb.from('posts').insert(row);if(error)throw error;
+    toast(eb?'Post updated':'Post published');resetB();load()}catch(x){toast('Could not save: '+x.message)}
+  $('#bb').disabled=false};
+document.body.addEventListener('click',async e=>{const d=e.target.dataset;
+  if(d.ep){const p=P.find(x=>x.id==d.ep);ep=p.id;$('#pn').value=p.name;$('#pr').value=p.price;$('#pc').value=p.category||'';$('#pd').value=p.description||'';$('#ps').checked=p.in_stock;$('#pt').textContent='Edit product';$('#pb').textContent='Save changes';$('#pcn').hidden=false;$('#pf').scrollIntoView()}
+  if(d.eb){const p=B.find(x=>x.id==d.eb);eb=p.id;$('#bh').value=p.title;$('#bd').value=p.body;$('#bt').textContent='Edit post';$('#bb').textContent='Save changes';$('#bcn').hidden=false;$('#bf').scrollIntoView()}
+  if(d.dp&&confirm('Delete this product? This cannot be undone.')){await sb.from('products').delete().eq('id',d.dp);toast('Product deleted');load()}
+  if(d.db&&confirm('Delete this post? This cannot be undone.')){await sb.from('posts').delete().eq('id',d.db);toast('Post deleted');load()}
+});
+gate();
+</script></body></html>
