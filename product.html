@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Product | New Glory Resources Store</title>
+<meta name="description" content="Product details at New Glory Resources Store.">
+<meta name="theme-color" content="#10192b">
+<link rel="icon" href="logo.jpg"><link rel="apple-touch-icon" href="logo.jpg">
+<meta property="og:type" content="product"><meta property="og:site_name" content="New Glory Resources Store">
+<meta property="og:title" content="New Glory Resources Store"><meta property="og:description" content="Gadgets at New Glory Resources Store.">
+<meta property="og:image" content="https://YOURDOMAIN/logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"></head><body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+<script>document.body.insertAdjacentHTML('afterbegin',head('p'))</script>
+<main class="wrap"><p style="margin-bottom:14px"><a href="index.html">Back to store</a></p><div id="w"><p class="empty">Loading product…</p></div></main>
+<footer>© New Glory Resources Limited · WhatsApp 0803 922 0007</footer>
+<script>
+const cnt=()=>{$('#cc').textContent=getCart().reduce((s,i)=>s+i.qty,0)};cnt();
+const id=new URLSearchParams(location.search).get('id');
+sb.from('products').select('*').eq('id',id).maybeSingle().then(({data:p,error})=>{
+  if(error||!p){$('#w').innerHTML='<p class="empty">We couldn’t find this product. <a href="index.html">See all products</a></p>';return}
+  const ims=p.images&&p.images.length?p.images:(p.image_url?[p.image_url]:[]);
+  document.title=p.name+' | New Glory Resources Store';
+  const m=(k,v)=>{const e=document.querySelector(k);if(e)e.setAttribute('content',v)};
+  m('meta[property="og:title"]',p.name);m('meta[name=description]',(p.description||p.name).slice(0,150));m('meta[property="og:description"]',(p.description||p.name).slice(0,150));if(ims[0])m('meta[property="og:image"]',ims[0]);
+  const wa='https://wa.me/'+WA+'?text='+encodeURIComponent('Hello, I’m interested in '+p.name+' ('+naira(p.price)+'). Is it available?');
+  $('#w').innerHTML=`<div class="pg"><div><img id="mi" src="${esc(ims[0]||ph)}" alt="${esc(p.name)}">${ims.length>1?'<div class="th">'+ims.map((u,i)=>`<button data-i="${i}" class="${i?'':'on'}" aria-label="Photo ${i+1}"><img src="${esc(u)}" alt=""></button>`).join('')+'</div>':''}</div>
+  <div><p class="mut">${esc(p.category||'')}</p><h1 style="font-size:clamp(1.5rem,5vw,2.1rem);margin:4px 0 10px">${esc(p.name)}</h1><p class="price" style="font-size:1.6rem">${naira(p.price)}</p><p class="mut" style="margin:6px 0 16px">${p.in_stock?'In stock':'Sold out'}</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="ad" ${p.in_stock?'':'disabled'}>Add to cart</button><a class="btn alt" href="${wa}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Ask on WhatsApp</a></div>
+  <h2 style="font-size:1.1rem;margin:24px 0 6px">About this product</h2><div style="white-space:pre-wrap;max-width:60ch">${esc(p.description||'No description yet.')}</div></div></div>`;
+  $('.th')&&($('.th').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('#mi').src=ims[b.dataset.i];document.querySelectorAll('.th button').forEach(x=>x.classList.toggle('on',x==b))});
+  $('#ad').onclick=()=>{const c=getCart(),i=c.find(x=>x.id==p.id);i?i.qty++:c.push({id:p.id,name:p.name,price:p.price,qty:1});saveCart(c);cnt();toast('Added to cart')};
+});
+</script></body></html>
