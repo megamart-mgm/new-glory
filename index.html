@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>New Glory Resources Store | Phones, Laptops &amp; Gadgets in Nigeria</title>
+<meta name="description" content="Shop phones, laptops, accessories and all kinds of gadgets at New Glory Resources Store. Order in minutes and finish on WhatsApp.">
+<meta name="theme-color" content="#10192b">
+<link rel="icon" href="logo.jpg"><link rel="apple-touch-icon" href="logo.jpg">
+<link rel="canonical" href="https://YOURDOMAIN/">
+<meta property="og:type" content="website"><meta property="og:site_name" content="New Glory Resources Store">
+<meta property="og:title" content="New Glory Resources Store">
+<meta property="og:description" content="Phones, laptops, accessories and all kinds of gadgets. Order on WhatsApp.">
+<meta property="og:url" content="https://YOURDOMAIN/"><meta property="og:image" content="https://YOURDOMAIN/logo.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"New Glory Resources Limited","url":"https://YOURDOMAIN/","logo":"https://YOURDOMAIN/logo.jpg","telephone":"+2348039220007"}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.hero{padding:6px 0 4px}.hero h1{font-size:clamp(1.6rem,6vw,2.4rem)}
+#dr{position:fixed;inset:0;background:rgba(16,25,43,.55);display:none;z-index:40}
+#dr.open{display:block}
+#pn{position:absolute;right:0;top:0;bottom:0;width:min(420px,100%);background:#fff;padding:16px;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.row{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.row b{flex:1;font-size:.95rem}.q{display:flex;align-items:center;gap:6px}.q button{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--line);background:#fff;font-size:1rem;cursor:pointer}
+</style></head><body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="app.js"></script>
+<script>document.body.insertAdjacentHTML('afterbegin',head('s'))</script>
+<main class="wrap">
+<div class="hero"><h1>Gadgets you can trust, delivered to you.</h1><p class="mut">Pick what you need, send your order on WhatsApp, and we confirm with you directly.</p></div>
+<label for="q" style="position:absolute;left:-9999px">Search products</label>
+<input id="q" type="search" placeholder="Search phones, laptops, chargers…" style="margin-top:12px">
+<div class="chips" id="chips"></div>
+<div class="grid" id="g"><p class="empty">Loading products…</p></div>
+</main>
+<footer>© New Glory Resources Limited · WhatsApp 0803 922 0007</footer>
+<div id="dr"><aside id="pn" role="dialog" aria-label="Your cart">
+<div style="display:flex;justify-content:space-between;align-items:center"><h2>Your cart</h2><button class="btn alt" id="x">Close</button></div>
+<div id="items"></div>
+<form id="f" hidden>
+<p style="margin-top:14px;font-weight:800;font-size:1.1rem">Total: <span id="tot"></span></p>
+<label for="n">Full name</label><input id="n" required autocomplete="name">
+<label for="p">Phone number</label><input id="p" type="tel" required autocomplete="tel">
+<label for="a">Delivery address</label><textarea id="a" rows="3" required autocomplete="street-address"></textarea>
+<button class="btn" style="width:100%;margin-top:16px">Send order on WhatsApp</button>
+</form></aside></div>
+<script>
+let all=[],cat='All',cart=[];
+try{cart=JSON.parse(localStorage.getItem('ngr_cart')||'[]')}catch(e){}
+const save=()=>{try{localStorage.setItem('ngr_cart',JSON.stringify(cart))}catch(e){}$('#cc').textContent=cart.reduce((s,i)=>s+i.qty,0)};
+function show(){
+  const q=$('#q').value.toLowerCase().trim();
+  const l=all.filter(p=>(cat=='All'||p.category==cat)&&(p.name+' '+(p.description||'')).toLowerCase().includes(q));
+  $('#g').innerHTML=l.length?l.map(p=>`<article class="card"><img src="${esc(p.image_url||ph)}" alt="${esc(p.name)}" loading="lazy"><div class="in"><h3 style="font-size:1rem">${esc(p.name)}</h3><p class="mut">${esc((p.description||'').slice(0,70))}</p><p class="price">${naira(p.price)}</p><button class="btn" style="margin-top:auto" data-id="${p.id}" ${p.in_stock?'':'disabled'}>${p.in_stock?'Add to cart':'Sold out'}</button></div></article>`).join(''):'<p class="empty">No products found. Try another search or category.</p>';
+}
+function chips(){const c=['All',...new Set(all.map(p=>p.category).filter(Boolean))];$('#chips').innerHTML=c.map(x=>`<button class="chip ${x==cat?'on':''}" data-c="${esc(x)}">${esc(x)}</button>`).join('')}
+function drawer(){
+  $('#items').innerHTML=cart.length?cart.map(i=>`<div class="row"><b>${esc(i.name)}<br><span class="mut">${naira(i.price)}</span></b><div class="q"><button data-m="${i.id}" aria-label="Less">−</button>${i.qty}<button data-p="${i.id}" aria-label="More">+</button></div></div>`).join(''):'<p class="empty">Your cart is empty.</p>';
+  $('#f').hidden=!cart.length;$('#tot').textContent=naira(cart.reduce((s,i)=>s+i.price*i.qty,0));save();
+}
+$('#g').onclick=e=>{const id=e.target.dataset.id;if(!id)return;const p=all.find(x=>x.id==id),c=cart.find(x=>x.id==id);c?c.qty++:cart.push({id,name:p.name,price:p.price,qty:1});drawer();toast('Added to cart')};
+$('#chips').onclick=e=>{if(e.target.dataset.c){cat=e.target.dataset.c;chips();show()}};
+$('#q').oninput=show;
+$('#cb').onclick=()=>{drawer();$('#dr').classList.add('open')};
+$('#x').onclick=()=>$('#dr').classList.remove('open');
+$('#dr').onclick=e=>{if(e.target.id=='dr')e.target.classList.remove('open')};
+$('#items').onclick=e=>{const d=e.target.dataset,i=cart.find(x=>x.id==(d.m||d.p));if(!i)return;d.p?i.qty++:i.qty--;cart=cart.filter(x=>x.qty>0);drawer()};
+$('#f').onsubmit=e=>{e.preventDefault();
+  const t=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const m=`*New order – New Glory Resources Store*\n\nName: ${$('#n').value}\nPhone: ${$('#p').value}\nAddress: ${$('#a').value}\n\n*Items*\n`+cart.map((i,k)=>`${k+1}. ${i.name} x${i.qty} – ${naira(i.price*i.qty)}`).join('\n')+`\n\n*Total: ${naira(t)}*`;
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank');
+  cart=[];drawer();$('#dr').classList.remove('open');e.target.reset();toast('Order sent. Finish in WhatsApp.');
+};
+save();
+sb.from('products').select('*').order('created_at',{ascending:false}).then(({data,error})=>{
+  if(error){$('#g').innerHTML='<p class="empty">Could not load products. Check your connection and refresh.</p>';return}
+  all=data||[];chips();show();
+});
+</script></body></html>
