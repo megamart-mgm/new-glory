@@ -18,7 +18,7 @@
 <div class="tabs"><button class="chip on" data-t="p">Products</button><button class="chip" data-t="b">Blog posts</button></div>
 <div id="tp"><form class="box" id="pf"><h2 id="pt" style="font-size:1.1rem">Add a product</h2>
 <label for="pn">Product name</label><input id="pn" required>
-<div class="two"><div><label for="pr">Price (₦)</label><input id="pr" type="number" min="0" step="any" required></div><div><label for="pc">Category</label><input id="pc" list="cl" placeholder="e.g. Phones"><datalist id="cl"></datalist></div></div>
+<div class="two"><div><label for="pr">Price (₦)</label><input id="pr" type="number" min="0" step="any" required></div><div><label for="pc">Category</label><input id="pc" list="cl" placeholder="e.g. Inverters"><datalist id="cl"></datalist></div></div>
 <label for="pd">Description</label><textarea id="pd" rows="3"></textarea>
 <label for="pi">Photos (up to 5, select them all at once)</label><input id="pi" type="file" accept="image/*" multiple><p class="mut">Choosing new photos replaces the current ones. The first photo is the cover.</p>
 <label style="display:flex;gap:8px;align-items:center"><input id="ps" type="checkbox" checked style="width:auto"> In stock</label>
@@ -37,11 +37,15 @@ async function up(f){if(!f)return null;const n=Date.now()+'-'+f.name.replace(/[^
 async function gate(){
   const{data:{session}}=await sb.auth.getSession();
   if(!session)return;
-  const{data}=await sb.from('admins').select('email').maybeSingle();
+  const{data,error}=await sb.from('admins').select('email').maybeSingle();
+  if(error){toast('Admin check failed: '+error.message);return}
   if(!data){await sb.auth.signOut();toast('This account is not an admin.');return}
   $('#lg').hidden=true;$('#ad').hidden=false;load();
 }
-$('#lf').onsubmit=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:$('#e').value,password:$('#pw').value});if(error)return toast('Wrong email or password.');gate()};
+$('#lf').onsubmit=async e=>{e.preventDefault();
+  const{error}=await sb.auth.signInWithPassword({email:$('#e').value.trim(),password:$('#pw').value});
+  if(error)return toast(error.message);
+  gate()};
 $('#out').onclick=async()=>{await sb.auth.signOut();location.reload()};
 document.querySelector('.tabs').onclick=e=>{const t=e.target.dataset.t;if(!t)return;document.querySelectorAll('.tabs .chip').forEach(c=>c.classList.toggle('on',c==e.target));$('#tp').hidden=t!='p';$('#tb').hidden=t!='b'};
 async function load(){
@@ -56,7 +60,7 @@ function resetB(){eb=null;$('#bf').reset();$('#bt').textContent='Write a blog po
 $('#pcn').onclick=resetP;$('#bcn').onclick=resetB;
 $('#pf').onsubmit=async e=>{e.preventDefault();$('#pb').disabled=true;
   try{const cur=P.find(x=>x.id==ep),fs=[...$('#pi').files];if(fs.length>5)toast('Only the first 5 photos were used');const ups=await Promise.all(fs.slice(0,5).map(up)),old=cur?.images?.length?cur.images:(cur?.image_url?[cur.image_url]:[]),ims=ups.length?ups:old;
-    const row={name:$('#pn').value,price:$('#pr').value,category:$('#pc').value||'Gadgets',description:$('#pd').value,in_stock:$('#ps').checked,images:ims,image_url:ims[0]||null};
+    const row={name:$('#pn').value,price:$('#pr').value,category:$('#pc').value||'Electricals',description:$('#pd').value,in_stock:$('#ps').checked,images:ims,image_url:ims[0]||null};
     const{error}=ep?await sb.from('products').update(row).eq('id',ep):await sb.from('products').insert(row);if(error)throw error;
     toast(ep?'Product updated':'Product added');resetP();load()}catch(x){toast('Could not save: '+x.message)}
   $('#pb').disabled=false};
