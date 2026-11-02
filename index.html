@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>New Glory Resources Store | Phones, Laptops &amp; Gadgets in Nigeria</title>
-<meta name="description" content="Shop phones, laptops, accessories and all kinds of gadgets at New Glory Resources Store. Order in minutes and finish on WhatsApp.">
+<title>New Glory Resources Store | Inverters, Solar &amp; Electrical Products in Nigeria</title>
+<meta name="description" content="Shop inverters, solar panels, batteries and electrical products at New Glory Resources Store. Pay in full or use Easy Buy and pay little by little. Order on WhatsApp.">
 <meta name="theme-color" content="#10192b">
 <link rel="icon" href="logo.jpg"><link rel="apple-touch-icon" href="logo.jpg">
 <link rel="canonical" href="https://YOURDOMAIN/">
 <meta property="og:type" content="website"><meta property="og:site_name" content="New Glory Resources Store">
 <meta property="og:title" content="New Glory Resources Store">
-<meta property="og:description" content="Phones, laptops, accessories and all kinds of gadgets. Order on WhatsApp.">
+<meta property="og:description" content="Inverters, solar and electrical products. Pay little by little with Easy Buy. Order on WhatsApp.">
 <meta property="og:url" content="https://YOURDOMAIN/"><meta property="og:image" content="https://YOURDOMAIN/logo.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Store","name":"New Glory Resources Limited","url":"https://YOURDOMAIN/","logo":"https://YOURDOMAIN/logo.jpg","telephone":"+2348039220007"}</script>
@@ -22,14 +22,89 @@
 #pn{position:absolute;right:0;top:0;bottom:0;width:min(420px,100%);background:#fff;padding:16px;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
 .row{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
 .row b{flex:1;font-size:.95rem}.q{display:flex;align-items:center;gap:6px}.q button{width:32px;height:32px;border-radius:6px;border:1.5px solid var(--line);background:#fff;font-size:1rem;cursor:pointer}
+
+/* ---- Product grid: 2 columns on phones, 5 on laptops ---- */
+main.wrap{max-width:1280px}
+#g.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media(min-width:640px){#g.grid{gap:14px}}
+@media(min-width:1024px){#g.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}}
+#g .card{min-width:0;display:flex;flex-direction:column}
+#g .card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+#g .card .in{display:flex;flex-direction:column;flex:1;padding:10px}
+#g .card h3{font-size:.9rem;line-height:1.25;overflow-wrap:anywhere}
+#g .card .mut{font-size:.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#g .card .price{font-size:.95rem;font-weight:800}
+#g .card .btn{font-size:.85rem;padding:9px 8px}
+#g .empty{grid-column:1/-1}
+
+/* ---- Easy Buy banner ---- */
+.eb{margin:12px 0 4px;padding:14px 16px;border-radius:14px;background:#10192b;color:#fff;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.eb h2{font-size:1.05rem;margin:0 0 4px;color:#fff}
+.eb p{margin:0;font-size:.9rem;line-height:1.45;opacity:.92}
+.eb ol{margin:8px 0 0;padding-left:18px;font-size:.85rem;opacity:.92}
+.eb a.btn{background:#25d366;color:#10192b;text-decoration:none;font-weight:800;white-space:nowrap}
+.eb .pill{display:inline-block;background:#f5b301;color:#10192b;font-weight:800;font-size:.7rem;padding:2px 8px;border-radius:99px;margin-bottom:6px;letter-spacing:.03em}
+
+/* ---- Budget filter ---- */
+.flt{margin-top:12px;padding:12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.flt h2{font-size:.95rem;margin:0 0 8px}
+.flt .r{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.flt .r.full{grid-template-columns:1fr}
+@media(min-width:640px){.flt .r{grid-template-columns:repeat(4,1fr)}}
+.flt label{display:block;font-size:.75rem;font-weight:700;margin:0 0 3px}
+.flt input,.flt select{width:100%;margin:0;min-height:40px}
+.flt .bar{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:8px}
+.flt .bar button{font-size:.85rem}
+#rc{margin:0}
+.chips{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+.chips .chip{flex:0 0 auto}
+.pm{margin-top:12px;font-weight:700;font-size:.9rem}
+.pm select{width:100%;margin-top:4px}
+.ebnote{font-size:.8rem;margin:6px 0 0;color:#444}
 </style></head><body>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="app.js"></script>
 <script>document.body.insertAdjacentHTML('afterbegin',head('s'))</script>
 <main class="wrap">
-<div class="hero"><h1>Gadgets you can trust, delivered to you.</h1><p class="mut">Pick what you need, send your order on WhatsApp, and we confirm with you directly.</p></div>
+<div class="hero"><h1>Power your home and business with trusted electrical products.</h1><p class="mut">Inverters, solar systems, batteries and more. Pick what you need, send your order on WhatsApp, and we confirm with you directly.</p></div>
+
+<section class="eb" aria-label="Easy Buy payment plan">
+  <div style="flex:1 1 280px">
+    <span class="pill">EASY BUY</span>
+    <h2>Pay little by little</h2>
+    <p>Can't pay all at once? Choose Easy Buy and pay in small instalments. Once your payment is complete, your product is delivered to you.</p>
+    <ol><li>Pick your product and choose Easy Buy at checkout</li><li>Agree your instalment plan with us on WhatsApp</li><li>Complete your payments and we deliver</li></ol>
+  </div>
+  <a class="btn" id="ebw" href="#" target="_blank" rel="noopener">Ask about Easy Buy</a>
+</section>
+
 <label for="q" style="position:absolute;left:-9999px">Search products</label>
-<input id="q" type="search" placeholder="Search phones, laptops, chargers…" style="margin-top:12px">
+<input id="q" type="search" placeholder="Search inverters, solar panels, batteries…" style="margin-top:12px">
+
+<div class="flt" aria-label="Filter by budget">
+  <h2>Shop within your budget</h2>
+  <div class="r">
+    <div><label for="bd">Price range</label>
+      <select id="bd">
+        <option value="">Any price</option>
+        <option value="0-100000">Under ₦100,000</option>
+        <option value="100000-300000">₦100,000 – ₦300,000</option>
+        <option value="300000-700000">₦300,000 – ₦700,000</option>
+        <option value="700000-1500000">₦700,000 – ₦1,500,000</option>
+        <option value="1500000-">Above ₦1,500,000</option>
+      </select></div>
+    <div><label for="mn">Min price (₦)</label><input id="mn" type="number" inputmode="numeric" min="0" placeholder="0"></div>
+    <div><label for="mx">Max price (₦)</label><input id="mx" type="number" inputmode="numeric" min="0" placeholder="Any"></div>
+    <div><label for="so">Sort by</label>
+      <select id="so">
+        <option value="new">Newest</option>
+        <option value="low">Price: low to high</option>
+        <option value="high">Price: high to low</option>
+      </select></div>
+  </div>
+  <div class="bar"><p id="rc" class="mut"></p><button class="btn alt" id="clr" type="button">Clear filters</button></div>
+</div>
+
 <div class="chips" id="chips"></div>
 <div class="grid" id="g"><p class="empty">Loading products…</p></div>
 </main>
@@ -42,16 +117,37 @@
 <label for="n">Full name</label><input id="n" required autocomplete="name">
 <label for="p">Phone number</label><input id="p" type="tel" required autocomplete="tel">
 <label for="a">Delivery address</label><textarea id="a" rows="3" required autocomplete="street-address"></textarea>
+<label class="pm" for="pay">Payment option</label>
+<select id="pay" style="width:100%">
+  <option value="full">Pay in full</option>
+  <option value="easy">Easy Buy (pay little by little)</option>
+</select>
+<p class="ebnote" id="ebn" hidden>With Easy Buy you pay in instalments. Your product is delivered once payment is complete. We will agree the plan with you on WhatsApp.</p>
 <button class="btn" style="width:100%;margin-top:16px">Send order on WhatsApp</button>
 </form></aside></div>
 <script>
 let all=[],cat='All',cart=[];
 try{cart=JSON.parse(localStorage.getItem('ngr_cart')||'[]')}catch(e){}
 const save=()=>{try{localStorage.setItem('ngr_cart',JSON.stringify(cart))}catch(e){}$('#cc').textContent=cart.reduce((s,i)=>s+i.qty,0)};
+
+$('#ebw').href='https://wa.me/'+WA+'?text='+encodeURIComponent('Hello New Glory Resources, I would like to know more about Easy Buy (paying little by little).');
+
 function show(){
   const q=$('#q').value.toLowerCase().trim();
-  const l=all.filter(p=>(cat=='All'||p.category==cat)&&(p.name+' '+(p.description||'')).toLowerCase().includes(q));
-  $('#g').innerHTML=l.length?l.map(p=>`<article class="card"><a href="product.html?id=${p.id}"><img src="${esc(p.image_url||ph)}" alt="${esc(p.name)}" loading="lazy"></a><div class="in"><h3 style="font-size:1rem"><a href="product.html?id=${p.id}" style="text-decoration:none">${esc(p.name)}</a></h3><p class="mut">${esc((p.description||'').slice(0,70))}</p><p class="price">${naira(p.price)}</p><button class="btn" style="margin-top:auto" data-id="${p.id}" ${p.in_stock?'':'disabled'}>${p.in_stock?'Add to cart':'Sold out'}</button></div></article>`).join(''):'<p class="empty">No products found. Try another search or category.</p>';
+  const mn=parseFloat($('#mn').value)||0;
+  const mxv=parseFloat($('#mx').value);
+  const mx=isNaN(mxv)?Infinity:mxv;
+  const so=$('#so').value;
+  let l=all.filter(p=>{
+    const price=Number(p.price)||0;
+    return (cat=='All'||p.category==cat)
+      &&(p.name+' '+(p.description||'')).toLowerCase().includes(q)
+      &&price>=mn&&price<=mx;
+  });
+  if(so=='low')l=l.slice().sort((a,b)=>a.price-b.price);
+  else if(so=='high')l=l.slice().sort((a,b)=>b.price-a.price);
+  $('#rc').textContent=l.length+(l.length==1?' product found':' products found');
+  $('#g').innerHTML=l.length?l.map(p=>`<article class="card"><a href="product.html?id=${p.id}"><img src="${esc(p.image_url||ph)}" alt="${esc(p.name)}" loading="lazy"></a><div class="in"><h3><a href="product.html?id=${p.id}" style="text-decoration:none">${esc(p.name)}</a></h3><p class="mut">${esc((p.description||'').slice(0,70))}</p><p class="price">${naira(p.price)}</p><button class="btn" style="margin-top:auto" data-id="${p.id}" ${p.in_stock?'':'disabled'}>${p.in_stock?'Add to cart':'Sold out'}</button></div></article>`).join(''):'<p class="empty">No products found in this budget or category. Try widening your price range.</p>';
 }
 function chips(){const c=['All',...new Set(all.map(p=>p.category).filter(Boolean))];$('#chips').innerHTML=c.map(x=>`<button class="chip ${x==cat?'on':''}" data-c="${esc(x)}">${esc(x)}</button>`).join('')}
 function drawer(){
@@ -61,15 +157,26 @@ function drawer(){
 $('#g').onclick=e=>{const id=e.target.dataset.id;if(!id)return;const p=all.find(x=>x.id==id),c=cart.find(x=>x.id==id);c?c.qty++:cart.push({id,name:p.name,price:p.price,qty:1});drawer();toast('Added to cart')};
 $('#chips').onclick=e=>{if(e.target.dataset.c){cat=e.target.dataset.c;chips();show()}};
 $('#q').oninput=show;
+$('#so').onchange=show;
+$('#bd').onchange=e=>{
+  const v=e.target.value;
+  if(!v){$('#mn').value='';$('#mx').value=''}
+  else{const [a,b]=v.split('-');$('#mn').value=a||'';$('#mx').value=b||''}
+  show();
+};
+$('#mn').oninput=$('#mx').oninput=()=>{$('#bd').value='';show()};
+$('#clr').onclick=()=>{$('#q').value='';$('#bd').value='';$('#mn').value='';$('#mx').value='';$('#so').value='new';cat='All';chips();show()};
+$('#pay').onchange=e=>{$('#ebn').hidden=e.target.value!='easy'};
 $('#cb').onclick=()=>{drawer();$('#dr').classList.add('open')};
 $('#x').onclick=()=>$('#dr').classList.remove('open');
 $('#dr').onclick=e=>{if(e.target.id=='dr')e.target.classList.remove('open')};
 $('#items').onclick=e=>{const d=e.target.dataset,i=cart.find(x=>x.id==(d.m||d.p));if(!i)return;d.p?i.qty++:i.qty--;cart=cart.filter(x=>x.qty>0);drawer()};
 $('#f').onsubmit=e=>{e.preventDefault();
   const t=cart.reduce((s,i)=>s+i.price*i.qty,0);
-  const m=`*New order – New Glory Resources Store*\n\nName: ${$('#n').value}\nPhone: ${$('#p').value}\nAddress: ${$('#a').value}\n\n*Items*\n`+cart.map((i,k)=>`${k+1}. ${i.name} x${i.qty} – ${naira(i.price*i.qty)}`).join('\n')+`\n\n*Total: ${naira(t)}*`;
+  const plan=$('#pay').value=='easy'?'Easy Buy (pay little by little, delivery after full payment)':'Pay in full';
+  const m=`*New order – New Glory Resources Store*\n\nName: ${$('#n').value}\nPhone: ${$('#p').value}\nAddress: ${$('#a').value}\nPayment option: ${plan}\n\n*Items*\n`+cart.map((i,k)=>`${k+1}. ${i.name} x${i.qty} – ${naira(i.price*i.qty)}`).join('\n')+`\n\n*Total: ${naira(t)}*`;
   window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(m),'_blank');
-  cart=[];drawer();$('#dr').classList.remove('open');e.target.reset();toast('Order sent. Finish in WhatsApp.');
+  cart=[];drawer();$('#dr').classList.remove('open');e.target.reset();$('#ebn').hidden=true;toast('Order sent. Finish in WhatsApp.');
 };
 let tp=0,tt;$('#cp').onclick=()=>{clearTimeout(tt);if(++tp>=2)location.href='admin.html';tt=setTimeout(()=>tp=0,600)};
 save();if(location.hash=='#cart'){drawer();$('#dr').classList.add('open')}
